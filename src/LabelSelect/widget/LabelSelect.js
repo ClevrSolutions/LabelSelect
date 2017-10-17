@@ -84,7 +84,9 @@ define([
                 callback: lang.hitch(this, this._processTags, callback),
                 error: lang.hitch(this, function (err) {
                     console.error(this.id + "._fetchCurrentLabels get failed, err: " + err.toString());
-                    mendix.lang.nullExec(callback);
+                    if (callback) {
+                        callback();
+                    };
                 })
             });
         },
@@ -135,7 +137,9 @@ define([
                 $("#" + this.id + "_ListBox").tagit("createTag", value);
             }, this);
 
-            mendix.lang.nullExec(callback);
+            if (callback) {
+                callback();
+            };
         },
 
         _startTagger: function (options) {
@@ -188,9 +192,7 @@ define([
                         actionname: mf,
                         guids: [obj.getGuid()],
                     },
-                    store: {
-                        caller: this.mxform
-                    },
+                    origin: this.mxform,
                     callback: function () {
                         if (cb && typeof cb === "function") {
                             cb();
@@ -268,7 +270,7 @@ define([
 
         _saveObject: function () {
             logger.debug(this.id + "._saveObject");
-            mx.data.save({
+            mx.data.commit({
                 mxobj: this._contextObj,
                 callback: lang.hitch(this, function () {
                     this._execMf(this._contextObj, this.onchangemf);
@@ -310,7 +312,9 @@ define([
                             }),
                             error: lang.hitch(this, function (err) {
                                 console.error(this.id + ".autocomplete.source get failed, err: " + err.toString());
-                                mendix.lang.nullExec(callback);
+                                if (callback) {
+                                    callback();
+                                };
                             })
                         });
                     }
